@@ -10,6 +10,7 @@ class TableView {
 		this.initDomReferences();
 		this.initCurrentCell();
 		this.renderTable();
+		this.attachEventHandlers();
 	}
 
 	initDomReferences() {
