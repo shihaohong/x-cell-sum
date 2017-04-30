@@ -89,16 +89,28 @@ class TableView {
 		this.attachEventHandlers();
 	}
 
-	initDomReferences() {
+	initDomReferences() { // initializes the DOM references
 		this.headerRowEl = document.querySelector('THEAD TR');
 		this.sheetBodyEl = document.querySelector('TBODY');
+		this.formulaBarEl = document.querySelector('#formula-bar');
 	}
 
-	initCurrentCell() {
+	initCurrentCell() { // initializes the first cell and renders formula bar
 		this.currentCellLocation = { col: 0, row: 0};
+		this.renderFormulaBar();
 	}
 
-	renderTable() {
+	normalizeValueForRendering(value) {
+		return value || '';
+	}
+
+	renderFormulaBar() {
+		const currentCellValue = this.model.getValue(this.currentCellLocation);
+		this.formulaBarEl.value = this.normalizeValueForRendering(currentCellValue);
+		this.formulaBarEl.focus();
+	}
+
+	renderTable() { // renders the table
 		this.renderTableHeader();
 		this.renderTableBody();
 	}
@@ -106,7 +118,7 @@ class TableView {
 	renderTableHeader() {
 		// clear header row
 		removeChildren(this.headerRowEl);
-		// get letters and build elements
+		// get letters and populates the header with appropriate values
 		getLetterRange('A', this.model.numCols)
 			.map(colLabel => createTH(colLabel))
 			.forEach(th => this.headerRowEl.appendChild(th));
@@ -154,6 +166,8 @@ class TableView {
 			this.currentCellLocation = {col: col, row: row};
 			this.renderTableBody();
 		}
+
+		this.renderFormulaBar();
 	}
 }
 
