@@ -116,4 +116,27 @@ describe('table-view', () =>  {
 			expect(labelTexts).toEqual(['A', 'B', 'C', 'D', 'E', 'F']);
 		});
 	});
+
+	describe('table footer', () => {
+		it('updates the sum row as intended', () => {
+			// set up the initial state
+			const numCols = 4;
+			const numRows = 10;
+			const model = new TableModel(numCols,numRows);
+			const view = new TableView(model);
+			model.setValue({col: 2, row: 2}, '5');
+			model.setValue({col: 2, row: 1}, '10');
+			model.setValue({col: 1, row: 2}, 3)
+			view.init();
+
+			// inspect the initial state
+			let tfd = document.querySelectorAll('TFOOT TD');
+			expect(tfd.length).toBe(numCols);
+
+			let sumValues = Array.from(tfd).map(el => el.textContent);
+			console.log(sumValues);
+			expect(sumValues).toEqual(['','3','15','']);
+
+		});
+	});
 });
