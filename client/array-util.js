@@ -13,4 +13,4 @@ const getLetterRange = function(firstLetter = 'A', numLetters) {
 module.exports = {
   getRange: getRange,
   getLetterRange: getLetterRange
-};
+}; 

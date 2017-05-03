@@ -9,36 +9,36 @@ tableView.init();
 
 },{"./table-model":4,"./table-view":5}],2:[function(require,module,exports){
 const getRange = function(fromNum, toNum) {
-	return Array.from({ length: toNum - fromNum + 1 },
-		(unused, i) => i + fromNum);	
+  return Array.from({ length: toNum - fromNum + 1 },
+    (unused, i) => i + fromNum);  
 };
 
 const getLetterRange = function(firstLetter = 'A', numLetters) {
-	const rangeStart = firstLetter.charCodeAt(0);
-	const rangeEnd = rangeStart + numLetters - 1;
-	return getRange(rangeStart, rangeEnd)
-		.map(charCode => String.fromCharCode(charCode));
+  const rangeStart = firstLetter.charCodeAt(0);
+  const rangeEnd = rangeStart + numLetters - 1;
+  return getRange(rangeStart, rangeEnd)
+    .map(charCode => String.fromCharCode(charCode));
 };
 
 module.exports = {
-	getRange: getRange,
-	getLetterRange: getLetterRange
+  getRange: getRange,
+  getLetterRange: getLetterRange
 };
 },{}],3:[function(require,module,exports){
 const removeChildren = function(parentEl) {
-	while (parentEl.firstChild) {
-		parentEl.removeChild(parentEl.firstChild);
-	}
+  while (parentEl.firstChild) {
+    parentEl.removeChild(parentEl.firstChild);
+  }
 };
 
 const createEl = function(tagName) {
-	return function(text) {
-		const el = document.createElement(tagName);
-		if (text) {
-			el.textContent = text;
-		}
-		return el;
-	};
+  return function(text) {
+    const el = document.createElement(tagName);
+    if (text) {
+      el.textContent = text;
+    }
+    return el;
+  };
 };
 
 const createTR = createEl('TR');
@@ -46,30 +46,30 @@ const createTH = createEl('TH');
 const createTD = createEl('TD');
 
 module.exports = {
-	createTR: createTR,
-	createTH: createTH,
-	createTD: createTD,
-	removeChildren: removeChildren
+  createTR: createTR,
+  createTH: createTH,
+  createTD: createTD,
+  removeChildren: removeChildren
 }
 },{}],4:[function(require,module,exports){
 class TableModel {
-	constructor(numCols=10, numRows=20){
-		this.numCols = numCols;
-		this.numRows = numRows;
-		this.data = {};
-	}
+  constructor(numCols=10, numRows=20){
+    this.numCols = numCols;
+    this.numRows = numRows;
+    this.data = {};
+  }
 
-	_getCellId(location) {
-		return `${location.col}:${location.row}`;
-	}
+  _getCellId(location) {
+    return `${location.col}:${location.row}`;
+  }
 
-	getValue(location) {
-		return this.data[this._getCellId(location)];
-	}
+  getValue(location) {
+    return this.data[this._getCellId(location)];
+  }
 
-	setValue(location, value) {
-		this.data[this._getCellId(location)] = value;
-	}
+  setValue(location, value) {
+    this.data[this._getCellId(location)] = value;
+  }
 }
 
 module.exports = TableModel;
@@ -78,120 +78,120 @@ const { getLetterRange } = require('./array-util');
 const { removeChildren, createTR, createTD, createTH } = require('./dom-util');
 
 class TableView {
-	constructor(model){
-		this.model = model
-	}
+  constructor(model){
+    this.model = model
+  }
 
-	init() {
-		this.initDomReferences();
-		this.initCurrentCell();
-		this.renderTable();
-		this.attachEventHandlers();
-	}
+  init() {
+    this.initDomReferences();
+    this.initCurrentCell();
+    this.renderTable();
+    this.attachEventHandlers();
+  }
 
-	initDomReferences() { // initializes the DOM references
-		this.headerRowEl = document.querySelector('THEAD TR');
-		this.sheetBodyEl = document.querySelector('TBODY');
-		this.footerRowEl = document.querySelector('TFOOT TR');
-		this.formulaBarEl = document.querySelector('#formula-bar');
-	}
+  initDomReferences() { // initializes the DOM references
+    this.headerRowEl = document.querySelector('THEAD TR');
+    this.sheetBodyEl = document.querySelector('TBODY');
+    this.footerRowEl = document.querySelector('TFOOT TR');
+    this.formulaBarEl = document.querySelector('#formula-bar');
+  }
 
-	initCurrentCell() { // initializes the first cell and renders formula bar
-		this.currentCellLocation = { col: 0, row: 0};
-		this.renderFormulaBar();
-	}
+  initCurrentCell() { // initializes the first cell and renders formula bar
+    this.currentCellLocation = { col: 0, row: 0};
+    this.renderFormulaBar();
+  }
 
-	normalizeValueForRendering(value) {
-		return value || '';
-	}
+  normalizeValueForRendering(value) {
+    return value || '';
+  }
 
-	renderFormulaBar() {
-		const currentCellValue = this.model.getValue(this.currentCellLocation);
-		this.formulaBarEl.value = this.normalizeValueForRendering(currentCellValue);
-		this.formulaBarEl.focus();
-	}
+  renderFormulaBar() {
+    const currentCellValue = this.model.getValue(this.currentCellLocation);
+    this.formulaBarEl.value = this.normalizeValueForRendering(currentCellValue);
+    this.formulaBarEl.focus();
+  }
 
-	renderTable() { // renders the table
-		this.renderTableHeader();
-		this.renderTableBody();
-		this.renderTableFooter();
-	}
+  renderTable() { // renders the table
+    this.renderTableHeader();
+    this.renderTableBody();
+    this.renderTableFooter();
+  }
 
-	renderTableHeader() {
-		// clear header row
-		removeChildren(this.headerRowEl);
-		// get letters and populates the header with appropriate values
-		getLetterRange('A', this.model.numCols)
-			.map(colLabel => createTH(colLabel))
-			.forEach(th => this.headerRowEl.appendChild(th));
-	}
+  renderTableHeader() {
+    // clear header row
+    removeChildren(this.headerRowEl);
+    // get letters and populates the header with appropriate values
+    getLetterRange('A', this.model.numCols)
+      .map(colLabel => createTH(colLabel))
+      .forEach(th => this.headerRowEl.appendChild(th));
+  }
 
-	isCurrentCell(col, row) {
-		return this.currentCellLocation.col === col && 
-			   this.currentCellLocation.row === row;
-	}
+  isCurrentCell(col, row) {
+    return this.currentCellLocation.col === col && 
+         this.currentCellLocation.row === row;
+  }
 
-	renderTableBody() {
-		const fragment = document.createDocumentFragment();
-		for (let row = 0; row < this.model.numRows; row++){
-			const tr = createTR();
-			for (let col = 0; col < this.model.numCols; col++){
-				const position = {col: col, row: row}; // generates the position of each box
-				const value = this.model.getValue(position); // gets the value thats in that position
-				const td = createTD(value); // creates a table item with that given value
-				
-				if (this.isCurrentCell(col, row)){
-					td.className = 'current-cell';
-				}
+  renderTableBody() {
+    const fragment = document.createDocumentFragment();
+    for (let row = 0; row < this.model.numRows; row++){
+      const tr = createTR();
+      for (let col = 0; col < this.model.numCols; col++){
+        const position = {col: col, row: row}; // generates the position of each box
+        const value = this.model.getValue(position); // gets the value thats in that position
+        const td = createTD(value); // creates a table item with that given value
+        
+        if (this.isCurrentCell(col, row)){
+          td.className = 'current-cell';
+        }
 
-				tr.appendChild(td); // appends a column element to the table row 
-			}
-			fragment.appendChild(tr); // appends the entire row to the fragment
-		}
-		removeChildren(this.sheetBodyEl);
-		this.sheetBodyEl.appendChild(fragment);
-	}
+        tr.appendChild(td); // appends a column element to the table row 
+      }
+      fragment.appendChild(tr); // appends the entire row to the fragment
+    }
+    removeChildren(this.sheetBodyEl);
+    this.sheetBodyEl.appendChild(fragment);
+  }
 
-	renderTableFooter() {
-		removeChildren(this.footerRowEl);
-		for (let col = 0; col < this.model.numCols; col++){
-			let sum = 0;
-			// insert sum values here when you figure it out
-			for (let row = 0; row < this.model.numRows; row++){
-				const position = {col:col, row: row};
-				const value = Number(this.model.getValue(position));
+  renderTableFooter() {
+    removeChildren(this.footerRowEl);
+    for (let col = 0; col < this.model.numCols; col++){
+      let sum = 0;
+      // insert sum values here when you figure it out
+      for (let row = 0; row < this.model.numRows; row++){
+        const position = {col:col, row: row};
+        const value = Number(this.model.getValue(position));
 
-				if (!isNaN(value)) {
-					sum += value;
-				}
-			}
+        if (!isNaN(value)) {
+          sum += value;
+        }
+      }
 
-			const td = createTD(sum);
-			this.footerRowEl.appendChild(td);
-		}
+      const td = createTD(sum);
+      this.footerRowEl.appendChild(td);
+    }
 
-	}
+  }
 
-	attachEventHandlers() {
-		this.sheetBodyEl.addEventListener('click', this.handleSheetClick.bind(this));
-		this.formulaBarEl.addEventListener('keyup', this.handleFormulaBarChange.bind(this));
-	}
+  attachEventHandlers() {
+    this.sheetBodyEl.addEventListener('click', this.handleSheetClick.bind(this));
+    this.formulaBarEl.addEventListener('keyup', this.handleFormulaBarChange.bind(this));
+  }
 
-	handleFormulaBarChange(evt) {
-		const value = this.formulaBarEl.value;
-		this.model.setValue(this.currentCellLocation, value);
-		this.renderTableBody();
-	}
+  handleFormulaBarChange(evt) {
+    const value = this.formulaBarEl.value;
+    this.model.setValue(this.currentCellLocation, value);
+    this.renderTableBody();
+  }
 
-	handleSheetClick(evt) {
-		const col = evt.target.cellIndex;
-		const row = evt.target.parentElement.rowIndex - 1;
+  handleSheetClick(evt) {
+    const col = evt.target.cellIndex;
+    const row = evt.target.parentElement.rowIndex - 1;
 
-		this.currentCellLocation = {col: col, row: row};
-		this.renderTableBody();
-		this.renderFormulaBar();
-		this.renderTableFooter();
-	}
+    this.currentCellLocation = {col: col, row: row};
+    this.renderTableBody();
+    this.renderFormulaBar();
+    this.renderTableFooter();
+  }
 }
 
 module.exports = TableView;
