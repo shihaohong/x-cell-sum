@@ -1,4 +1,4 @@
-const { getLetterRange } = require('./array-util');
+onst { getLetterRange } = require('./array-util');
 const { removeChildren, createTR, createTD, createTH } = require('./dom-util');
 
 class TableView {
