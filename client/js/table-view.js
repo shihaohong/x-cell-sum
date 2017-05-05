@@ -2,7 +2,7 @@ const { getLetterRange } = require('./array-util');
 const { removeChildren, createTR, createTD, createTH } = require('./dom-util');
 
 class TableView {
-  constructor(model){
+  constructor(model) {
     this.model = model
   }
 
@@ -51,8 +51,7 @@ class TableView {
   }
 
   isCurrentCell(col, row) {
-    return this.currentCellLocation.col === col && 
-         this.currentCellLocation.row === row;
+    return this.currentCellLocation.col === col && this.currentCellLocation.row === row;
   }
 
   renderTableBody() {
